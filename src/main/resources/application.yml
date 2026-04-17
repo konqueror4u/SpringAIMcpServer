@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: "MCP Server"
+  main:
+    allow-bean-definition-overriding: true
+  sql:
+    init:
+      mode: always
+      platform: postgresql
+      schema-locations: classpath:schema.sql
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5433/postgres
+    username: postgres
+    password: secret
+
+  ai:
+    mcp:
+      server:
+        name: vis-mcp-server
+        capabilities:
+          resource: true
+        type: ASYNC
+        protocol: STREAMABLE
+        stdio: false
+        annotation-scanner:
+          enabled: true
+        sse-message-endpoint: /mcp/message
+        sse-endpoint: /sse
+        streamable-http:
+          mcp-endpoint: /mcp
+
+
+  devtools:
+    restart:
+      enabled: false
+logging:
+  level:
+    org:
+      springframework:
+        ai: DEBUG
+server:
+  port: 9060
+

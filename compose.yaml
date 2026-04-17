@@ -1,0 +1,25 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434" # Fixed mapping
+    volumes:
+      - ollama_data:/root/.ollama
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres-r2dbc
+    environment:
+      - POSTGRES_DB=ai_db
+      - POSTGRES_USER=postgres # Good practice to be explicit
+      - POSTGRES_PASSWORD=secret
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./src/main/resources/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - postgres_data:/var/lib/postgresql/data # Persistence for your DB
+
+volumes:
+  ollama_data:
+  postgres_data:

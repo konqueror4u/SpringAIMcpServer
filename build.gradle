@@ -1,0 +1,62 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.0.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'org.vis'
+version = '0.0.1-SNAPSHOT'
+description = 'MCPServer'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(26)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    set('springAiVersion', "2.0.0-M4")
+}
+
+dependencies {
+    // 1. BOM (Bill of Materials) should always come first
+    implementation platform("org.springframework.ai:spring-ai-bom:${springAiVersion}")
+
+    // 2. This is the ONLY MCP starter you need for a WebFlux server
+    implementation 'org.springframework.ai:spring-ai-starter-mcp-server-webflux'
+
+    // 3. Standard Spring Boot & AI starters
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+
+    // 4. Platform specific & Runtime
+    implementation 'io.netty:netty-resolver-dns-native-macos:4.1.100.Final:osx-aarch_64'
+    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'org.postgresql:r2dbc-postgresql'
+
+    // 5. Development tools
+    developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+    developmentOnly 'org.springframework.ai:spring-ai-spring-boot-docker-compose'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    // 6. Testing
+    testImplementation 'org.springframework.boot:spring-boot-starter-data-r2dbc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webflux-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
